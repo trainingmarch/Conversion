@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="xmlTojsonConversionFlow" doc:id="0c3b0e06-7f82-4144-929e-e4a71dcaad78" >
+		<http:listener doc:name="Listener" doc:id="7fcfaeb1-2cb9-4179-b071-36b33a500fe8" config-ref="HTTP_Listener_config" path="/xmltojson"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1cc981cd-291d-49d4-9f1f-3bc6dbd7edfd" message="flow started" category="get XML data"/>
+		<ee:transform doc:name="Transform Message" doc:id="bdb0b5bb-e084-41c5-85da-bf5935d71dcb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload."output".catalog.*book map
+{
+	Author: $.author,
+	Title: $.title,
+	Price: $.price,
+	Publish_Date: $.publish_date
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="82c2c1d2-2264-4db4-b4bc-d27472a23e68" message="#[payload]" category="End of flow"/>
+	</flow>
+</mule>
